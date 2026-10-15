@@ -59,7 +59,7 @@ jobs:
           components: clippy, rustfmt
       # cargo-nextest runs the tests: each in a process of its own, with a
       # timeout per test and a JUnit report. See src/.config/nextest.toml.
-      - uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
+      - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
         with:
           tool: cargo-nextest@0.9.148
       # Saved even when the job fails: a cache saved only by a green run
@@ -252,7 +252,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # master (v1), 2026-10-09
         with:
           toolchain: ${{ steps.toolchain.outputs.channel }}
-      - uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
+      - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
         if: runner.os == 'Windows'
         with:
           tool: cargo-nextest@0.9.148
