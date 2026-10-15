@@ -1,0 +1,34 @@
+[package]
+name = "pamedit-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Command line driver for the PAM_Edit_Video engine."
+
+# `pamedit` is the editor window's binary; the driver gets the suffix.
+[[bin]]
+name = "pamedit-cli"
+path = "src/main.rs"
+
+[dependencies]
+pamedit-core.workspace = true
+pamedit-media.workspace = true
+pamedit-render.workspace = true
+# The `api` command: the PAM_Edit_Video API over stdin and stdout. The `serve`
+# command: the same on a socket.
+pamedit-api.workspace = true
+pamedit-server.workspace = true
+serde_json.workspace = true
+# `preview` draws one effect's card, as the window does; `check` loads
+# packages and runs their probes.
+pamedit-effects.workspace = true
+pamedit-host.workspace = true
+clap.workspace = true
+
+[features]
+# `serve --grpc`. Off by default; see pamedit-server.
+grpc = ["pamedit-server/grpc"]
+
+[lints]
+workspace = true
