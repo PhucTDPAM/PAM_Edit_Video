@@ -1,0 +1,29 @@
+# Maintainer: noxygalaxy <noxycraftyt@gmail.com>
+pkgname=pamedit
+pkgver=${PAMEDIT_VERSION:?PAMEDIT_VERSION must be set}
+pkgrel=1
+pkgdesc="Free and open source video editor"
+arch=('x86_64' 'aarch64')
+url=""
+license=('AGPL-3.0-or-later')
+depends=('glibc' 'gtk3' 'fontconfig' 'freetype2' 'libxkbcommon' 'mesa' 'alsa-lib')
+options=('!strip' '!debug')
+source=()
+
+stage=${PAMEDIT_STAGE:?PAMEDIT_STAGE must point at the staged folder}
+
+package() {
+  install -Dm755 "$stage/pamedit" "$pkgdir/opt/pamedit/pamedit"
+  install -d "$pkgdir/opt/pamedit/lib"
+  cp -a "$stage"/lib/. "$pkgdir/opt/pamedit/lib/"
+
+  install -d "$pkgdir/usr/bin"
+  printf '#!/bin/sh\nexec /opt/pamedit/pamedit "$@"\n' > "$pkgdir/usr/bin/pamedit"
+  chmod 755 "$pkgdir/usr/bin/pamedit"
+  install -Dm644 "$stage/pamedit.desktop" "$pkgdir/usr/share/applications/pamedit.desktop"
+  sed -i 's|^Exec=pamedit|Exec=/opt/pamedit/pamedit %U|' "$pkgdir/usr/share/applications/pamedit.desktop"
+  install -Dm644 "$stage/pamedit.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/pamedit.png"
+
+  install -Dm644 "$stage/LICENSE" "$pkgdir/usr/share/licenses/pamedit/LICENSE"
+  install -Dm644 "$stage/THIRD_PARTY_NOTICES.md" "$pkgdir/usr/share/licenses/pamedit/THIRD_PARTY_NOTICES.md"
+}

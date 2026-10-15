@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PAM_Edit Video's Windows Installer package, the .msi beside the Inno Setup .exe.
+
+  Built by build-app.yml with WiX from the staged folder the .exe is made
+  of, so the two installers ship the same files. The .exe is the
+  one a person double-clicks; this is the one an administrator deploys -
+  Group Policy, Intune, winget - and it installs for the machine, into
+  Program Files, with a Start menu entry and a clean uninstall. Handed in:
+
+    wix build -arch x64 -d Version=0.2.7 -d Root=C:\...\PAM_Edit Video
+              -d Stage=C:\...\stage\PAM_Edit_Video-0.2.7-windows-x86_64
+              -o stage\PAM_Edit_Video-0.2.7-windows-x86_64.msi assets\windows\pamedit.wxs
+
+  Root is the repository: WiX resolves a source path against where it is
+  run from, not against this file.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <!-- One upgrade code for the life of the product, so a newer .msi
+       replaces an older one rather than sitting beside it. -->
+  <Package Name="PAM_Edit Video"
+           Manufacturer="PAM_Edit Video team"
+           Version="$(var.Version)"
+           UpgradeCode="232CE20E-53C9-46FD-AE46-D8305B074F18"
+           Scope="perMachine"
+           Language="1033">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of PAM_Edit Video is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="pamedit.ico" SourceFile="$(var.Root)\assets\icons\pamedit.ico" />
+    <Property Id="ARPPRODUCTICON" Value="pamedit.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="PAM_Edit Video" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ShortcutFolder" Name="PAM_Edit Video" />
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="PAM_Edit Video" Level="1">
+      <ComponentGroupRef Id="Program" />
+      <ComponentRef Id="StartMenu" />
+    </Feature>
+
+    <!-- Every file in the staged folder, as it is there. -->
+    <ComponentGroup Id="Program" Directory="INSTALLFOLDER">
+      <Files Include="$(var.Stage)\**" />
+    </ComponentGroup>
+
+    <Component Id="StartMenu" Directory="ShortcutFolder" Guid="41F268E0-6C6C-422B-9ECA-7CAF2799931D">
+      <Shortcut Id="StartMenuShortcut"
+                Name="PAM_Edit Video"
+                Description="Video editor"
+                Target="[INSTALLFOLDER]pamedit.exe"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="pamedit.ico" />
+      <RemoveFolder Id="RemoveShortcutFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\PAM_Edit Video" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+  </Package>
+</Wix>
